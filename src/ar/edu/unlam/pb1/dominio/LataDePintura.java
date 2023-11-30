@@ -3,6 +3,7 @@ package ar.edu.unlam.pb1.dominio;
 import ar.edu.unlam.pb1.dominio.enums.TipoDePintura;
 
 public class LataDePintura {
+	
 	// TODO: Completar getters, setters, constructor y metodos necesarios para garantizar el correcto funcionamiento.
 
 	private final double PRECIO_BASE = 1000;
@@ -12,10 +13,17 @@ public class LataDePintura {
 	private TipoDePintura tipoDePintura;
 	private int stock;
 	private double porcentajeDeGanancia;
+	
 
-	public LataDePintura(int codigo, String nombre, double porcentajeDeGanancia, TipoDePintura tipoDePintura,
-			int stock) {
+	public LataDePintura(int codigo, String nombre, TipoDePintura tipoDePintura, int stock,
+			double porcentajeDeGanancia) {
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.tipoDePintura = tipoDePintura;
+		this.stock = stock;
+		this.porcentajeDeGanancia = porcentajeDeGanancia;
 	}
+
 
 	public double obtenerPrecio() {
 		// TODO: Calcular y obtener el precio de la lata de pintura, el cual se calcula
@@ -26,6 +34,69 @@ public class LataDePintura {
 		// (calculado sobre el precio base) que se debe agregar al precio final. No
 		// olvidar agregar el porcentaje de ganancia, tambien calculado sobre el precio
 		// base.
-		return 0;
+		double precio = PRECIO_BASE * ( 1 + porcentajeDeGanancia / 100);
+		if(tipoDePintura == TipoDePintura.SATINADA) {
+			precio *= 1.15;
+		} else if(tipoDePintura == TipoDePintura.MATE) {
+			precio *= 1.05;
+			precio += precio * 0.03;
+		}
+		return precio;
 	}
+
+	public int getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public TipoDePintura getTipoDePintura() {
+		return tipoDePintura;
+	}
+
+	public void setTipoDePintura(TipoDePintura tipoDePintura) {
+		this.tipoDePintura = tipoDePintura;
+	}
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
+
+	public double getPorcentajeDeGanancia() {
+		return porcentajeDeGanancia;
+	}
+
+	public void setPorcentajeDeGanancia(double porcentajeDeGanancia) {
+		this.porcentajeDeGanancia = porcentajeDeGanancia;
+	}
+
+	public double getPRECIO_BASE() {
+		return PRECIO_BASE;
+	}
+
+
+	@Override
+	public String toString() {
+		return "LataDePintura [PRECIO_BASE=" + PRECIO_BASE + ", codigo=" + codigo + ", nombre=" + nombre
+				+ ", tipoDePintura=" + tipoDePintura + ", stock=" + stock + ", porcentajeDeGanancia="
+				+ porcentajeDeGanancia + "]";
+	}
+	
+	
+	
+
 }

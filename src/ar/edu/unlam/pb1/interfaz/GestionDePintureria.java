@@ -4,11 +4,12 @@ import java.util.Scanner;
 
 import ar.edu.unlam.pb1.dominio.LataDePintura;
 import ar.edu.unlam.pb1.dominio.Pintureria;
+import ar.edu.unlam.pb1.dominio.enums.TipoDePintura;
 import ar.edu.unlam.pb1.interfaz.enums.MenuPrincipal;
 
 public class GestionDePintureria {
 
-	private static final Scanner TECLADO = new Scanner(System.in);
+	private static final Scanner SC = new Scanner(System.in); // Nombre cambiado por costumbre
 
 	public static void main(String[] args) {
 		// TODO: Escriba el codigo necesario para garantizar el correcto funcionamiento
@@ -16,6 +17,36 @@ public class GestionDePintureria {
 		// buscando llevar el codigo a ejecutarse (en cada caso del menu) a un metodo
 		// apropiado (Ver los métodos incluídos a continuación).Es necesario solicitar
 		// la cantidad de latas posibles de almacenar en una pinturería.
+		
+		mostrarPorPantalla("Bienvenido al Gestion de Pintureria");
+		int cantidad = ingresarNumeroEntero("Por favor, ingrese la cantidad de latas posibles de almacenar" );
+	    Pintureria pintureria = new Pintureria("La pintureria de Imanuelsan", cantidad);
+
+		do {
+			switch (obtenerOpcionDeEnumParaMenuPrincipal()) {
+			case AGREGAR_LATA_PINTURA:
+				agregarLataDePintura(pintureria);
+				break;
+			case VENDER_LATAS_PINTURA:
+				venderLatasDePintura(pintureria);
+				break;
+			case MOSTRAR_CANTIDAD_LATAS_EN_STOCK_POR_TIPO:
+				mostrarCantidadDeLatasEnStockPorTipoDePintura(pintureria);
+				break;
+			case MOSTRAR_LATAS_PINTURA_MAS_BARATA_POR_TIPO:
+				mostrarLatasDePinturaMasBarataPorTipoDePintura(pintureria);
+				break;
+			case MOSTRAR_RESUMEN_PINTURERIA:
+				mostrarResumenPintureria(pintureria);
+				break;
+			case SALIR:
+				mostrarPorPantalla("Gracias por usar el programa");
+				break;
+			default:
+				mostrarPorPantalla("Opción inválida");
+				break;
+			}
+		} while (MenuPrincipal.SALIR != obtenerOpcionDeEnumParaMenuPrincipal());
 	}
 
 	private static void agregarLataDePintura(Pintureria pintureria) {
@@ -31,9 +62,28 @@ public class GestionDePintureria {
 		// en caso de ingresar un valor invalido.
 		// Si se agrega correctamente la lata de pintura a la pintureria, mostrar un
 		// mensaje de exito, caso contrario, uno de error.
+        mostrarPorPantalla("Ingrese los datos de la lata de pintura:");
+        int codigo = ingresarNumeroEntero("Codigo: ");
+        String nombre = ingresarString("Nombre: ");
+        double porcentajeGanancia = ingresarDouble("Porcentaje de Ganancia: ");
+        String tipoPinturaIngresada = ingresarString("Tipo de Pintura (MATE o SATINADA): ").toUpperCase();
+        int stock = ingresarNumeroEntero("Stock: ");
+
+        // Validar que el tipo de pintura sea MATE o SATINADA
+        while (!tipoPinturaIngresada.equals("MATE") && !tipoPinturaIngresada.equals("SATINADA")) {
+            mostrarPorPantalla("Tipo de pintura no encontrada . Ingrese MATE o SATINADA.");
+            tipoPinturaIngresada = ingresarString("Tipo de Pintura (MATE o SATINADA): ").toUpperCase();
+        }
+        TipoDePintura tipoDePintura = TipoDePintura.valueOf(tipoPinturaIngresada);
+
+        if (pintureria.agregarLataDePintura(codigo, nombre, porcentajeGanancia, tipoDePintura, stock)) {
+            mostrarPorPantalla("Lata de pintura agregada con exito");
+        } else {
+            mostrarPorPantalla("Error al agregar la lata de pintura. Verifique el codigo.");
+        }
 	}
 
-	private static void venderLatasDePintura(Pintureria pintureria) {
+	private static void venderLatasDePintura (Pintureria pintureria) {
 		// TODO: Se deberan mostrar las latas de pintura ordenadas por nombre
 		// ascendente, que dispone la pintureria para
 		// que el usuario pueda ingresar el codigo y la cantidad de latas que desea
@@ -43,6 +93,17 @@ public class GestionDePintureria {
 		// esa lata de pintura,
 		// mostrar un mensaje acorde y no procesar la venta. Si la cantidad es valida,
 		// proceder a realizar la venta y mostrar un mensaje de exito.
+        mostrarLatasDePintura(pintureria.obtenerLatasDePinturaOrdenadasPorNombreAscendente());
+
+        int codigo = ingresarNumeroEntero("Ingrese el codigo de la lata a vender: ");
+        int cantidad = ingresarNumeroEntero("Ingrese la cantidad de latas a vender: ");
+
+        if (pintureria.hayStock(codigo, cantidad)) {
+            pintureria.venderLatasDePintura(codigo, cantidad);
+            mostrarPorPantalla("Venta realizada con éxito");
+        } else {
+            mostrarPorPantalla("No hay suficiente stock para realizar la venta");
+        }
 	}
 
 	private static void mostrarLatasDePinturaMasBarataPorTipoDePintura(Pintureria pintureria) {
@@ -52,12 +113,29 @@ public class GestionDePintureria {
 		// tipo, mostrar un mensaje apropiado.
 		// Ejemplo: Pintura SATINADA mas barata: <pintura>
 		// Ejemplo: Pintura MATE mas barata: <pintura>
+	    mostrarPorPantalla("Latas de Pintura más baratas por tipo:");
+	    for (int i = 0; i < TipoDePintura.values().length; i++) {
+	        TipoDePintura tipo = TipoDePintura.values()[i];
+	        LataDePintura lataMasBarata = pintureria.obtenerLataDePinturaMasBarataPorTipo(tipo);
+
+	        if (lataMasBarata != null) {
+	            mostrarPorPantalla("Pintura " + tipo + " mas barata: " + lataMasBarata.getNombre());
+	        } else {
+	            mostrarPorPantalla("No hay latas de pintura para el tipo " + tipo);
+	        }
+	    }
 	}
 
 	private static void mostrarCantidadDeLatasEnStockPorTipoDePintura(Pintureria pintureria) {
 		// TODO: Mostrar la cantidad de latas de pinturas satinadas y la cantidad de
 		// latas de pinturas mate que tiene la pintureria.
 		// Ejemplo: Pinturas SATINADAS: 10 - Pinturas MATE: 5
+	    int cantidadSatinadas = pintureria.obtenerCantidadDeLatasDePinturasEnStockPorTipo(TipoDePintura.SATINADA);
+	    int cantidadMate = pintureria.obtenerCantidadDeLatasDePinturasEnStockPorTipo(TipoDePintura.MATE);
+
+	    mostrarPorPantalla("Cantidad de latas de pintura en stock por tipo:");
+	    mostrarPorPantalla("Pinturas SATINADAS: " + cantidadSatinadas);
+	    mostrarPorPantalla("Pinturas MATE: " + cantidadMate);
 	}
 
 	private static void mostrarResumenPintureria(Pintureria pintureria) {
@@ -66,6 +144,10 @@ public class GestionDePintureria {
 		// nombre ascendente.
 		// Ademas, debe mostrarse la cantidad de latas de pintura vendidas y el saldo
 		// actual de la pintureria.
+	    mostrarPorPantalla("Latas de Pintura en Stock:");
+	    mostrarLatasDePintura(pintureria.obtenerLatasDePinturaOrdenadasPorNombreAscendente());
+	    mostrarPorPantalla("Cantidad de latas vendidas: " + pintureria.getCantidadLatasVendidas());
+	    mostrarPorPantalla("Saldo actual de la pinturería: $" + pintureria.getSaldo());
 	}
 
 	private static void mostrarMenuPrincipal() {
@@ -94,17 +176,17 @@ public class GestionDePintureria {
 
 	private static int ingresarNumeroEntero(String mensaje) {
 		mostrarPorPantalla(mensaje);
-		return TECLADO.nextInt();
+		return SC.nextInt();
 	}
 
 	private static String ingresarString(String mensaje) {
 		mostrarPorPantalla(mensaje);
-		return TECLADO.next();
+		return SC.next();
 	}
 
 	private static double ingresarDouble(String mensaje) {
 		mostrarPorPantalla(mensaje);
-		return TECLADO.nextDouble();
+		return SC.nextDouble();
 	}
 
 	private static void mostrarPorPantalla(String mensaje) {
