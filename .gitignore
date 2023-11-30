@@ -1,0 +1,44 @@
+# Directorios específicos de Eclipse
+.metadata/
+bin/
+tmp/
+.settings/
+RemoteSystemsTempFiles/
+.project
+.classpath
+.factorypath
+
+# Directorios específicos de Maven
+target/
+log/
+/release/
+
+# Archivos de configuración específicos de Maven
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Archivos de Eclipse
+*.log
+*.swp
+*.bak
+*.old
+
+# Archivos de compilación de Java
+*.class
+
+# Archivos de configuración de Eclipse
+*.launch
+*.recommenders
+
+# Carpetas generadas por Java
+bin/
+gen/
+
+# Carpetas específicas de Gradle
+.gradle/
+
+# Carpetas generadas por IntelliJ IDEA
+.idea/
+
+# Archivos específicos de Visual Studio Code
+.vscode/
