@@ -18,35 +18,38 @@ public class GestionDePintureria {
 		// apropiado (Ver los métodos incluídos a continuación).Es necesario solicitar
 		// la cantidad de latas posibles de almacenar en una pinturería.
 		
-		mostrarPorPantalla("Bienvenido al Gestion de Pintureria");
+        mostrarPorPantalla("¡Bienvenido! Esperamos que disfrutes administrando la pinturería virtual.");
 		int cantidad = ingresarNumeroEntero("Por favor, ingrese la cantidad de latas posibles de almacenar" );
 	    Pintureria pintureria = new Pintureria("La pintureria de Imanuelsan", cantidad);
 
-		do {
-			switch (obtenerOpcionDeEnumParaMenuPrincipal()) {
-			case AGREGAR_LATA_PINTURA:
-				agregarLataDePintura(pintureria);
-				break;
-			case VENDER_LATAS_PINTURA:
-				venderLatasDePintura(pintureria);
-				break;
-			case MOSTRAR_CANTIDAD_LATAS_EN_STOCK_POR_TIPO:
-				mostrarCantidadDeLatasEnStockPorTipoDePintura(pintureria);
-				break;
-			case MOSTRAR_LATAS_PINTURA_MAS_BARATA_POR_TIPO:
-				mostrarLatasDePinturaMasBarataPorTipoDePintura(pintureria);
-				break;
-			case MOSTRAR_RESUMEN_PINTURERIA:
-				mostrarResumenPintureria(pintureria);
-				break;
-			case SALIR:
-				mostrarPorPantalla("Gracias por usar el programa");
-				break;
-			default:
-				mostrarPorPantalla("Opción inválida");
-				break;
-			}
-		} while (MenuPrincipal.SALIR != obtenerOpcionDeEnumParaMenuPrincipal());
+	    MenuPrincipal opcionMenu;
+	    do {
+	        opcionMenu = obtenerOpcionDeEnumParaMenuPrincipal();
+	        switch (opcionMenu) {
+	            case AGREGAR_LATA_PINTURA:
+	                agregarLataDePintura(pintureria);
+	                break;
+	            case VENDER_LATAS_PINTURA:
+	                venderLatasDePintura(pintureria);
+	                break;
+	            case MOSTRAR_CANTIDAD_LATAS_EN_STOCK_POR_TIPO:
+	                mostrarCantidadDeLatasEnStockPorTipoDePintura(pintureria);
+	                break;
+	            case MOSTRAR_LATAS_PINTURA_MAS_BARATA_POR_TIPO:
+	                mostrarLatasDePinturaMasBarataPorTipoDePintura(pintureria);
+	                break;
+	            case MOSTRAR_RESUMEN_PINTURERIA:
+	                mostrarResumenPintureria(pintureria);
+	                break;
+	            case SALIR:
+	                mostrarPorPantalla("¡Gracias por confiar en " + pintureria.getNombre() + " en este último año!");
+	                mostrarPorPantalla("Esperamos verte de nuevo pronto. ¡Hasta la próxima!");
+	                break;
+	            default:
+	                mostrarPorPantalla("Opción inválida");
+	                break;
+	        }
+	    } while (opcionMenu != MenuPrincipal.SALIR);
 	}
 
 	private static void agregarLataDePintura(Pintureria pintureria) {
@@ -63,23 +66,37 @@ public class GestionDePintureria {
 		// Si se agrega correctamente la lata de pintura a la pintureria, mostrar un
 		// mensaje de exito, caso contrario, uno de error.
         mostrarPorPantalla("Ingrese los datos de la lata de pintura:");
-        int codigo = ingresarNumeroEntero("Codigo: ");
+        int codigo;
+        do {
+            codigo = ingresarNumeroEntero("Codigo: ");
+            if (pintureria.obtenerLataDePinturaPorCodigo(codigo) != null) {
+                mostrarPorPantalla("Ya existe una lata con ese código. Ingrese un código diferente.");
+            }
+        } while (pintureria.obtenerLataDePinturaPorCodigo(codigo) != null);
+
         String nombre = ingresarString("Nombre: ");
         double porcentajeGanancia = ingresarDouble("Porcentaje de Ganancia: ");
-        String tipoPinturaIngresada = ingresarString("Tipo de Pintura (MATE o SATINADA): ").toUpperCase();
-        int stock = ingresarNumeroEntero("Stock: ");
-
-        // Validar que el tipo de pintura sea MATE o SATINADA
-        while (!tipoPinturaIngresada.equals("MATE") && !tipoPinturaIngresada.equals("SATINADA")) {
-            mostrarPorPantalla("Tipo de pintura no encontrada . Ingrese MATE o SATINADA.");
+        String tipoPinturaIngresada;
+        do {
             tipoPinturaIngresada = ingresarString("Tipo de Pintura (MATE o SATINADA): ").toUpperCase();
-        }
+            if (!tipoPinturaIngresada.equals("MATE") && !tipoPinturaIngresada.equals("SATINADA")) {
+                mostrarPorPantalla("Tipo de pintura no encontrada. Ingrese MATE o SATINADA.");
+            }
+        } while (!tipoPinturaIngresada.equals("MATE") && !tipoPinturaIngresada.equals("SATINADA"));
         TipoDePintura tipoDePintura = TipoDePintura.valueOf(tipoPinturaIngresada);
 
+        int stock;
+        do {
+            stock = ingresarNumeroEntero("Stock: ");
+            if (stock <= 0) {
+                mostrarPorPantalla("El stock debe ser mayor a cero. Ingrese un valor válido.");
+            }
+        } while (stock <= 0);
+
         if (pintureria.agregarLataDePintura(codigo, nombre, porcentajeGanancia, tipoDePintura, stock)) {
-            mostrarPorPantalla("Lata de pintura agregada con exito");
+            mostrarPorPantalla("Lata de pintura agregada con éxito");
         } else {
-            mostrarPorPantalla("Error al agregar la lata de pintura. Verifique el codigo.");
+            mostrarPorPantalla("Error al agregar la lata de pintura. Verifique el código.");
         }
 	}
 
@@ -95,8 +112,19 @@ public class GestionDePintureria {
 		// proceder a realizar la venta y mostrar un mensaje de exito.
         mostrarLatasDePintura(pintureria.obtenerLatasDePinturaOrdenadasPorNombreAscendente());
 
-        int codigo = ingresarNumeroEntero("Ingrese el codigo de la lata a vender: ");
-        int cantidad = ingresarNumeroEntero("Ingrese la cantidad de latas a vender: ");
+        int codigo = ingresarNumeroEntero("Ingrese el código de la lata a vender: ");
+        if (pintureria.obtenerLataDePinturaPorCodigo(codigo) == null) {
+            mostrarPorPantalla("No existe una lata con ese código.");
+            return;
+        }
+
+        int cantidad;
+        do {
+            cantidad = ingresarNumeroEntero("Ingrese la cantidad de latas a vender: ");
+            if (cantidad <= 0) {
+                mostrarPorPantalla("La cantidad debe ser mayor a cero. Ingrese un valor válido.");
+            }
+        } while (cantidad <= 0);
 
         if (pintureria.hayStock(codigo, cantidad)) {
             pintureria.venderLatasDePintura(codigo, cantidad);

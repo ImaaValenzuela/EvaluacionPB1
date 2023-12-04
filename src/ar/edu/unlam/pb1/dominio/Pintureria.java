@@ -8,10 +8,10 @@ public class Pintureria {
 	
 	// TODO: Completar getters, setters, constructor y metodos necesarios para garantizar el correcto funcionamiento.
 
-	private String nombre;
-	private LataDePintura[] latasDePintura;
-	private double saldo;
-	private int cantidadLatasVendidas;
+    private String nombre;
+    private LataDePintura[] latasDePintura;
+    private double saldo = 0;
+    private int cantidadLatasVendidas = 0;
 
 	public Pintureria(String nombre, int cantidadLatasPintura) {
 		this.nombre = nombre;
@@ -153,8 +153,8 @@ public class Pintureria {
 
 	@Override
 	public String toString() {
-		return "Pintureria [nombre=" + nombre + ", latasDePintura=" + Arrays.toString(latasDePintura) + ", saldo="
-				+ saldo + ", cantidadLatasVendidas=" + cantidadLatasVendidas + "]";
+	    return String.format("Nombre: %s\nSaldo: $%.2f\nCant. Vendidas: %d\nLatas: %s",
+	            nombre, saldo, cantidadLatasVendidas, Arrays.toString(latasDePintura));
 	}
 	
 	

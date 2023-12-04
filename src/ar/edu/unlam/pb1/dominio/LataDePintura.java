@@ -6,7 +6,7 @@ public class LataDePintura {
 	
 	// TODO: Completar getters, setters, constructor y metodos necesarios para garantizar el correcto funcionamiento.
 
-	private final double PRECIO_BASE = 1000;
+	private static final double PRECIO_BASE = 1000;
 
 	private int codigo;
 	private String nombre;
@@ -91,9 +91,8 @@ public class LataDePintura {
 
 	@Override
 	public String toString() {
-		return "LataDePintura [PRECIO_BASE=" + PRECIO_BASE + ", codigo=" + codigo + ", nombre=" + nombre
-				+ ", tipoDePintura=" + tipoDePintura + ", stock=" + stock + ", porcentajeDeGanancia="
-				+ porcentajeDeGanancia + "]";
+	    return String.format("Código: %d\nNombre: %s\nTipo: %s\nStock: %d\nGanancia: %.2f%%\nPrecio: $%.2f",
+	            codigo, nombre, tipoDePintura, stock, porcentajeDeGanancia, obtenerPrecio());
 	}
 	
 	
